@@ -1,12 +1,19 @@
 import pytest
-from aleph_message.models import MessageType, MessagesResponse
+import time
+
+from aleph_message.models import MessageType, MessagesResponse, PostMessage, PostContent
+from build.lib.aleph_client import conf
+
 
 from aleph_client.asynchronous import (
     get_messages,
     fetch_aggregates,
     fetch_aggregate,
     _get_fallback_session,
+    create_post,
 )
+
+from aleph_client.chains.ethereum import ETHAccount, get_fallback_account
 
 
 @pytest.mark.asyncio
@@ -57,3 +64,36 @@ async def test_get_messages():
     assert len(messages) > 1
     assert messages[0].type
     assert messages[0].sender
+
+
+
+@pytest.mark.asyncio
+async def test_create_post():
+    _get_fallback_session.cache_clear()
+    
+    account: ETHAccount = get_fallback_account()
+    post_content : PostContent = (
+        "ALEPH IN PARIS"
+    )
+    
+    response: PostMessage = await create_post(
+        account,
+        post_content,
+        post_type = "ok",
+        ref = "0293283127",
+        # address = conf.settings.ADDRESS_TO_USE,
+        # channel = conf.settings.DEFAULT_CHANNEL,
+        api_server = conf.settings.API_HOST,
+        inline = True, 
+    )
+    
+    content = response.content
+    assert content.type == "ok"
+    assert content.content == "ALEPH IN PARIS"
+    assert content.time <= time.time()
+    assert content.ref == "0293283127"
+    
+    # print(content)
+        
+    
+    
