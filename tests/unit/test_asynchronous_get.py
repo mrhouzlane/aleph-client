@@ -80,7 +80,7 @@ async def test_create_post():
         account,
         post_content,
         post_type = "ok",
-        ref = "0293283127",
+        ref = "02932831278",
         # address = conf.settings.ADDRESS_TO_USE,
         # channel = conf.settings.DEFAULT_CHANNEL,
         api_server = conf.settings.API_HOST,
@@ -91,7 +91,7 @@ async def test_create_post():
     assert content.type == "ok"
     assert content.content == "ALEPH IN PARIS"
     assert content.time <= time.time()
-    assert content.ref == "0293283127"
+    assert content.ref == "02932831278"
     
     # print(content)
         
