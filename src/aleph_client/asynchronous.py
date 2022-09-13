@@ -9,6 +9,7 @@ import threading
 import time
 from datetime import datetime
 from functools import lru_cache
+from types import NoneType
 
 from aleph_message.models import (
     ForgetContent,
@@ -385,7 +386,7 @@ async def create_program(
 async def forget(
     account: Account,
     hashes: List[str],
-    reason: Optional[str],
+    reason: Optional[str]=None,
     storage_engine: StorageEnum = StorageEnum.storage,
     channel: str = settings.DEFAULT_CHANNEL,
     address: Optional[str] = settings.ADDRESS_TO_USE,
@@ -457,7 +458,7 @@ async def submit(
     # let's add the content to the object so users can access it.
     message["content"] = content
 
-    add_item_content_and_hash(message, inplace=True)
+    # add_item_content_and_hash(message, inplace=True)
     return Message(**message)
 
 
@@ -475,7 +476,8 @@ async def fetch_aggregate(
         params["limit"] = limit
 
     async with session.get(
-        f"{api_server}/api/v0/aggregates/{address}.json", params=params
+        f"{api_server}/api/v0/aggregates/{address}.json", 
+        params=params
     ) as resp:
         result = await resp.json()
         data = result.get("data", dict())
