@@ -421,9 +421,10 @@ async def submit(
     channel: str = settings.DEFAULT_CHANNEL,
     api_server: str = settings.API_HOST,
     storage_engine: StorageEnum = StorageEnum.storage,
-    session: Optional[ClientSession] = None,
+    session: Optional[ClientSession]=None,
     inline: bool = True,
 ) -> AlephMessage:
+    
     message: Dict[str, Any] = {
         #'item_hash': ipfs_hash,
         "chain": account.CHAIN,
@@ -432,8 +433,10 @@ async def submit(
         "type": message_type,
         "time": time.time(),
     }
-
+    
     item_content: str = json.dumps(content, separators=(",", ":"))
+
+
 
     if inline and (len(item_content) < 50000):
         message["item_content"] = item_content
