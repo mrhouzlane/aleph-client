@@ -479,7 +479,7 @@ async def fetch_aggregate(
         f"{api_server}/api/v0/aggregates/{address}.json", 
         params=params
     ) as resp:
-        result = await resp.json()
+        result = await resp.json(encoding="utf-8", content_type="application/json" )
         data = result.get("data", dict())
         return data.get(key)
 
