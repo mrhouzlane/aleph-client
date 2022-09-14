@@ -238,40 +238,40 @@ async def test_forget():
     assert content.aggregates == FC[1]
     
 
-# @pytest.mark.asyncio
-# async def test_submit():
+@pytest.mark.asyncio
+async def test_submit():
     
-#     _get_fallback_session.cache_clear()
-#     account: ETHAccount = get_fallback_account()
+    _get_fallback_session.cache_clear()
+    account: ETHAccount = get_fallback_account()
     
     
-#     response : AlephMessage = await submit(
+    response : AlephMessage = await submit(
         
-#         account = account,
-#         content = {"Hello" : "World"},
-#         message_type = MessageType.store,
-#         channel = conf.settings.DEFAULT_CHANNEL,
-#         api_server = conf.settings.API_HOST,
-#         storage_engine = StorageEnum.storage,
-#         inline = True
-#     )
+        account = account,
+        content = {"Hello" : "World"},
+        message_type = MessageType.store,
+        channel = conf.settings.DEFAULT_CHANNEL,
+        api_server = conf.settings.API_HOST,
+        storage_engine = StorageEnum.storage,
+        inline = True
+    )
     
-#     message = response.message 
+    message = response.message 
     
-#     assert message.chain == account.CHAIN
+    assert message.chain == account.CHAIN
 
 
-# @pytest.mark.asyncio
-# async def test_fetch_aggregate():
+@pytest.mark.asyncio
+async def test_fetch_aggregate():
     
-#     _get_fallback_session.cache_clear()
-#     account: ETHAccount = get_fallback_account()
+    _get_fallback_session.cache_clear()
+    account: ETHAccount = get_fallback_account()
     
-#     response: Dict[str, Dict] = await fetch_aggregate(
-#         address = account.get_address(),
-#         key = "hello",
-#         api_server = "https://example.org/"
-#     )
+    response: Dict[str, Dict] = await fetch_aggregate(
+        address = account.get_address(),
+        key = "hello",
+        api_server = "https://example.org/"
+    )
 
 
 
