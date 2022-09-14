@@ -8,6 +8,8 @@ from aleph_message.models import AggregateMessage, AggregateContent, StoreMessag
 from build.lib.aleph_client import conf
 from aleph_message.models.program import Encoding, MachineType, ProgramContent, CodeContent, FunctionTriggers
 from aleph_message.models.program import FunctionEnvironment, MachineResources, FunctionRuntime, MachineVolume
+from aleph_client.chains.common import get_fallback_private_key, delete_private_key_file
+from aiohttp.client import ClientSession
 
 
 from aleph_client.asynchronous import (
@@ -80,9 +82,11 @@ async def test_get_messages():
 
 @pytest.mark.asyncio
 async def test_create_post():
+    delete_private_key_file()
+
     _get_fallback_session.cache_clear()
     
-    account: ETHAccount = get_fallback_account()
+    account: ETHAccount() = get_fallback_account()
     post_content : PostContent = (
         "ALEPH IN PARIS"
     )
@@ -108,6 +112,8 @@ async def test_create_post():
         
 @pytest.mark.asyncio
 async def test_create_aggregate():
+    delete_private_key_file()
+
     _get_fallback_session.cache_clear()
     account: ETHAccount = get_fallback_account()
     
@@ -134,6 +140,8 @@ async def test_create_aggregate():
 
 @pytest.mark.asyncio
 async def test_create_store():
+    delete_private_key_file()
+
     _get_fallback_session.cache_clear()
     
     account: ETHAccount = get_fallback_account()
@@ -163,6 +171,8 @@ async def test_create_store():
 
 @pytest.mark.asyncio
 async def test_create_program():
+    delete_private_key_file()
+
     
     _get_fallback_session.cache_clear()
     account: ETHAccount = get_fallback_account()
@@ -216,6 +226,9 @@ async def test_create_program():
 @pytest.mark.asyncio
 async def test_forget():
     
+    delete_private_key_file()
+
+    
     _get_fallback_session.cache_clear()
     account: ETHAccount = get_fallback_account()
     
@@ -243,8 +256,26 @@ async def test_submit():
     
     _get_fallback_session.cache_clear()
     account: ETHAccount = get_fallback_account()
+=======
+    delete_private_key_file()
+
+    _get_fallback_session.cache_clear()
+    account: ETHAccount = get_fallback_account()
     
+    response : AlephMessage = await submit(
+        account = account,
+        content = {"Hello" : "World"},
+        message_type = MessageType.store,
+        channel = conf.settings.DEFAULT_CHANNEL,
+        api_server = conf.settings.API_HOST,
+        storage_engine = StorageEnum.storage,
+        inline = True
+    )
+>>>>>>> 67c74a0 ("k")
     
+    message = response.message 
+    
+<<<<<<< HEAD
     response : AlephMessage = await submit(
         
         account = account,
@@ -272,6 +303,11 @@ async def test_fetch_aggregate():
         key = "hello",
         api_server = "https://example.org/"
     )
+=======
+    assert message.chain == account.CHAIN
+
+
+>>>>>>> 67c74a0 ("k")
 
 
 
