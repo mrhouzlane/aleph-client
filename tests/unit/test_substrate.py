@@ -22,7 +22,6 @@ def test_get_fallback_account():
     # c = Keypair.generate_mnemonic()
     # v = Keypair.validate_mnemonic(c)
     mnemonic = get_fallback_mnemonics()
-    # assert len(mnemonic) >= 64
     keypair = Keypair.create_from_mnemonic(mnemonic)
     account : DOTAccount(mnemonics = mnemonic) = get_fallback_account()
     assert account.CHAIN == "DOT"
