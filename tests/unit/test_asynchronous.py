@@ -54,9 +54,10 @@ async def test_create_post():
     private_key = get_fallback_private_key()
     account: ETHAccount = ETHAccount(private_key=private_key)
 
-    content : PostContent{
-        "item_type" : ItemType.inline
+    content = {
+        "Hello" : "world"
     }
+        
 
     mock_session = new_mock_session_with_post_success()
 
