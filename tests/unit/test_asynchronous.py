@@ -1,7 +1,7 @@
 import os
 import time 
 from unittest.mock import MagicMock, patch, AsyncMock
-
+from aleph_message.models import ItemType
 import pytest as pytest
 from aleph_message.models import (
     PostMessage,
@@ -54,7 +54,9 @@ async def test_create_post():
     private_key = get_fallback_private_key()
     account: ETHAccount = ETHAccount(private_key=private_key)
 
-    content = {"Hello": "World"}
+    content : PostContent{
+        "item_type" : ItemType.inline
+    }
 
     mock_session = new_mock_session_with_post_success()
 
@@ -67,6 +69,8 @@ async def test_create_post():
         api_server="https://example.org",
     )
 
+    response = new_post.address 
+    assert response == account.get_address()
     assert mock_session.post.called
     assert isinstance(new_post, PostMessage)
 
@@ -211,31 +215,31 @@ async def test_forget():
     assert mock_session.post.called
     assert isinstance(new_post, ForgetMessage)
 
-# @pytest.mark.asyncio
-# async def test_submit():
-#     _get_fallback_session.cache_clear()
+@pytest.mark.asyncio
+async def test_submit():
+    _get_fallback_session.cache_clear()
     
-#     if os.path.exists(settings.PRIVATE_KEY_FILE):
-#             os.remove(settings.PRIVATE_KEY_FILE)
+    if os.path.exists(settings.PRIVATE_KEY_FILE):
+            os.remove(settings.PRIVATE_KEY_FILE)
 
-#     private_key = get_fallback_private_key()
-#     account: ETHAccount = ETHAccount(private_key=private_key)
+    private_key = get_fallback_private_key()
+    account: ETHAccount = ETHAccount(private_key=private_key)
     
     
-#     mock_session = new_mock_session_with_post_success()
+    mock_session = new_mock_session_with_post_success()
     
-#     address = account.get_address()
+    address = account.get_address()
     
-#     content = {"Hello": "World"}
+    content = {"Hello": "World"}
     
-#     response  = await submit(
-#         account = account,
-#         content = content,
-#         message_type = "POST",
-#     )
+    response  = await submit(
+        account = account,
+        content = content,
+        message_type = "POST",
+    )
     
-#     assert mock_session.post.called
-#     assert isinstance(response, AlephMessage)
+    assert mock_session.post.called
+    assert isinstance(response, AlephMessage)
     
     
 @pytest.mark.asyncio
@@ -258,17 +262,3 @@ async def fetch_aggregate():
         key = "0xa1B3bb7d2332383D96b7796B908fB7f7F3c2Be10",
         api_server = settings.API_HOST,
     )
-    
-    
-
-
-    
-    
-    
-    
-    
-
-
-        
-
-        

@@ -9,7 +9,7 @@ import threading
 import time
 from datetime import datetime
 from functools import lru_cache
-from types import NoneType
+from typing import Type
 
 from aleph_message.models import (
     ForgetContent,
@@ -21,14 +21,15 @@ from aleph_message.models import (
     Message,
     ForgetMessage,
     AlephMessage,
-    add_item_content_and_hash,
     AggregateMessage,
     StoreMessage,
     ProgramMessage,
     MessagesResponse,
 )
 
-from aleph_client.types import Account, StorageEnum
+from aleph_client.types import Account, StorageEnum, GenericMessage
+from .exceptions import MessageNotFoundError, MultipleMessagesError
+from .utils import get_message_type_value
 
 logger = logging.getLogger(__name__)
 
@@ -386,7 +387,7 @@ async def create_program(
 async def forget(
     account: Account,
     hashes: List[str],
-    reason: Optional[str]=None,
+    reason: Optional[str],
     storage_engine: StorageEnum = StorageEnum.storage,
     channel: str = settings.DEFAULT_CHANNEL,
     address: Optional[str] = settings.ADDRESS_TO_USE,
@@ -421,10 +422,9 @@ async def submit(
     channel: str = settings.DEFAULT_CHANNEL,
     api_server: str = settings.API_HOST,
     storage_engine: StorageEnum = StorageEnum.storage,
-    session: Optional[ClientSession]=None,
+    session: Optional[ClientSession] = None,
     inline: bool = True,
 ) -> AlephMessage:
-    
     message: Dict[str, Any] = {
         #'item_hash': ipfs_hash,
         "chain": account.CHAIN,
@@ -433,10 +433,8 @@ async def submit(
         "type": message_type,
         "time": time.time(),
     }
-    
+
     item_content: str = json.dumps(content, separators=(",", ":"))
-
-
 
     if inline and (len(item_content) < 50000):
         message["item_content"] = item_content
@@ -461,7 +459,6 @@ async def submit(
     # let's add the content to the object so users can access it.
     message["content"] = content
 
-    # add_item_content_and_hash(message, inplace=True)
     return Message(**message)
 
 
@@ -479,10 +476,9 @@ async def fetch_aggregate(
         params["limit"] = limit
 
     async with session.get(
-        f"{api_server}/api/v0/aggregates/{address}.json", 
-        params=params
+        f"{api_server}/api/v0/aggregates/{address}.json", params=params
     ) as resp:
-        result = await resp.json(encoding="utf-8", content_type="application/json" )
+        result = await resp.json()
         data = result.get("data", dict())
         return data.get(key)
 
@@ -613,6 +609,37 @@ async def get_messages(
         resp.raise_for_status()
         messages_json = await resp.json()
         return MessagesResponse(**messages_json)
+
+
+async def get_message(
+    item_hash: str,
+    message_type: Optional[Type[GenericMessage]] = None,
+    channel: Optional[str] = None,
+    session: Optional[ClientSession] = None,
+    api_server: str = settings.API_HOST,
+) -> GenericMessage:
+    """Get a single message from its `item_hash`."""
+    messages_response = await get_messages(
+        hashes=[item_hash],
+        session=session,
+        channels=[channel] if channel else None,
+        api_server=api_server,
+    )
+    if len(messages_response.messages) < 1:
+        raise MessageNotFoundError(f"No such hash {item_hash}")
+    if len(messages_response.messages) != 1:
+        raise MultipleMessagesError(
+            f"Multiple messages found for the same item_hash `{item_hash}`"
+        )
+    message: GenericMessage = messages_response.messages[0]
+    if message_type:
+        expected_type = get_message_type_value(message_type)
+        if message.type != expected_type:
+            raise TypeError(
+                f"The message type '{message.type}' "
+                f"does not match the expected type '{expected_type}'"
+            )
+    return message
 
 
 async def watch_messages(

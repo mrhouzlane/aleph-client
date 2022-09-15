@@ -2,6 +2,8 @@ from dis import code_info
 import pytest
 import time
 from typing import Dict 
+from base64 import b64encode
+
 
 from aleph_message.models import MessageType, MessagesResponse, PostMessage, PostContent, ProgramMessage, ForgetMessage, AlephMessage
 from aleph_message.models import AggregateMessage, AggregateContent, StoreMessage, StoreContent, ItemType, ForgetContent
@@ -99,7 +101,7 @@ async def test_create_post():
         # address = conf.settings.ADDRESS_TO_USE,
         # channel = conf.settings.DEFAULT_CHANNEL,
         api_server = conf.settings.API_HOST,
-        inline = True, 
+        inline = False, 
     )
     
     content = response.content
@@ -107,6 +109,7 @@ async def test_create_post():
     assert content.content == "ALEPH IN PARIS"
     assert content.time <= time.time()
     assert content.ref == "02932831278"
+    # assert content.address == "ok"
         
     
         
@@ -128,7 +131,8 @@ async def test_create_aggregate():
     response: AggregateMessage = await create_aggregate(
         account = account,
         key = key,
-        content = content
+        content = content,
+        inline = False
     )
     
     
@@ -147,7 +151,7 @@ async def test_create_store():
     account: ETHAccount = get_fallback_account()
     
     content : StoreContent = (
-        ItemType.ipfs,
+        ItemType.storage,
         "1291272085159665688"
     )
     
@@ -157,15 +161,16 @@ async def test_create_store():
     response: StoreMessage = await create_store(
         account,
         address = conf.settings.ADDRESS_TO_USE,
-        file_hash = "0x1",
+        file_hash = item_hash,
         channel = conf.settings.DEFAULT_CHANNEL,
         api_server = conf.settings.API_HOST,
-        storage_engine = StorageEnum.ipfs
+        storage_engine = StorageEnum.storage,
+        inline = False,
     )
     
     content = response.content
     assert content.item_type == item_type
-    assert content.item_hash == "0x1"
+    assert content.item_hash == "1291272085159665688"
     # assert len(content) > 200
     
 
@@ -253,63 +258,55 @@ async def test_forget():
 
 @pytest.mark.asyncio
 async def test_submit():
-<<<<<<< HEAD
     
-    _get_fallback_session.cache_clear()
-    account: ETHAccount = get_fallback_account()
-=======
     delete_private_key_file()
 
     _get_fallback_session.cache_clear()
     account: ETHAccount = get_fallback_account()
     
+    a = b64encode(b'ItemType.ipfs').decode('utf-8')
+    b = b64encode(b'time.time()').decode('utf-8')
+    c = b64encode(b'account.get_address').decode('utf-8')
+
+    
+    content = {
+        "address" : c,
+        "time" : b, 
+        "item_type" : a,
+        "item_hash": "QmRND9qqJ8NHNYi3ssYXgdcYqV3cXowAovtScCowLymtzD"
+    }
+    
+    
+    # content : str = {
+    #     "address " : account.get_address,
+    #     "time" : time.time(),
+    #     "item_type" : ItemType.ipfs, 
+    #     "item_hash" : "0x1"
+    # }
+    
+    
     response : AlephMessage = await submit(
         account = account,
-        content = {"Hello" : "World"},
+        content = content,
         message_type = MessageType.store,
         channel = conf.settings.DEFAULT_CHANNEL,
         api_server = conf.settings.API_HOST,
-        storage_engine = StorageEnum.storage,
-        inline = True
-    )
->>>>>>> 67c74a0 ("k")
-    
-    message = response.message 
-    
-<<<<<<< HEAD
-    response : AlephMessage = await submit(
-        
-        account = account,
-        content = {"Hello" : "World"},
-        message_type = MessageType.store,
-        channel = conf.settings.DEFAULT_CHANNEL,
-        api_server = conf.settings.API_HOST,
-        storage_engine = StorageEnum.storage,
-        inline = True
+        storage_engine = StorageEnum.ipfs,
+        inline= True,
+        # item_type = ItemType.storage
     )
     
-    message = response.message 
+    assert response.item_content
     
-    assert message.chain == account.CHAIN
-
-
-@pytest.mark.asyncio
-async def test_fetch_aggregate():
     
-    _get_fallback_session.cache_clear()
-    account: ETHAccount = get_fallback_account()
+   
+   
+
+
+# @pytest.mark.asyncio
+# async def test_get_messages():
     
-    response: Dict[str, Dict] = await fetch_aggregate(
-        address = account.get_address(),
-        key = "hello",
-        api_server = "https://example.org/"
-    )
-=======
-    assert message.chain == account.CHAIN
-
-
->>>>>>> 67c74a0 ("k")
-
+    
 
 
     
