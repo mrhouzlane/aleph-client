@@ -387,7 +387,7 @@ async def create_program(
 async def forget(
     account: Account,
     hashes: List[str],
-    reason: Optional[str],
+    reason: Optional[str]=None,
     storage_engine: StorageEnum = StorageEnum.storage,
     channel: str = settings.DEFAULT_CHANNEL,
     address: Optional[str] = settings.ADDRESS_TO_USE,
@@ -452,11 +452,12 @@ async def submit(
             message["item_hash"] = await storage_push(
                 content, session=session, api_server=api_server
             )
-
+            
+        
     message = await account.sign_message(message)
     await broadcast(message, session=session, api_server=api_server)
 
-    # let's add the content to the object so users can access it.
+    #let's add the content to the object so users can access it.
     message["content"] = content
 
     return Message(**message)

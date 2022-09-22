@@ -101,7 +101,7 @@ async def test_create_post():
         # address = conf.settings.ADDRESS_TO_USE,
         # channel = conf.settings.DEFAULT_CHANNEL,
         api_server = conf.settings.API_HOST,
-        inline = False, 
+        inline = True, 
     )
     
     content = response.content
@@ -132,7 +132,6 @@ async def test_create_aggregate():
         account = account,
         key = key,
         content = content,
-        inline = False
     )
     
     
@@ -165,7 +164,6 @@ async def test_create_store():
         channel = conf.settings.DEFAULT_CHANNEL,
         api_server = conf.settings.API_HOST,
         storage_engine = StorageEnum.storage,
-        inline = False,
     )
     
     content = response.content
@@ -256,55 +254,53 @@ async def test_forget():
     assert content.aggregates == FC[1]
     
 
-@pytest.mark.asyncio
-async def test_submit():
-    
-    delete_private_key_file()
-
-    _get_fallback_session.cache_clear()
-    account: ETHAccount = get_fallback_account()
-    
-    a = b64encode(b'ItemType.ipfs').decode('utf-8')
-    b = b64encode(b'time.time()').decode('utf-8')
-    c = b64encode(b'account.get_address').decode('utf-8')
-
-    
-    content = {
-        "address" : c,
-        "time" : b, 
-        "item_type" : a,
-        "item_hash": "QmRND9qqJ8NHNYi3ssYXgdcYqV3cXowAovtScCowLymtzD"
-    }
-    
-    
-    # content : str = {
-    #     "address " : account.get_address,
-    #     "time" : time.time(),
-    #     "item_type" : ItemType.ipfs, 
-    #     "item_hash" : "0x1"
-    # }
-    
-    
-    response : AlephMessage = await submit(
-        account = account,
-        content = content,
-        message_type = MessageType.store,
-        channel = conf.settings.DEFAULT_CHANNEL,
-        api_server = conf.settings.API_HOST,
-        storage_engine = StorageEnum.ipfs,
-        inline= True,
-        # item_type = ItemType.storage
-    )
-    
-    assert response.item_content
-    
-    
-   
-   
-
-
 # @pytest.mark.asyncio
-# async def test_get_messages():
+# async def test_submit():
+    
+#     delete_private_key_file()
+
+#     _get_fallback_session.cache_clear()
+#     account: ETHAccount = get_fallback_account()
+    
+#     a = b64encode(b'ItemType.ipfs').decode('utf-8')
+#     b = b64encode(b'time.time()').decode('utf-8')
+#     c = b64encode(b'account.get_address').decode('utf-8')
+
+#     content = {
+#         "address" : c,
+#         "time" : b, 
+#         "item_type" : a,
+#         "item_hash": "QmRND9qqJ8NHNYi3ssYXgdcYqV3cXowAovtScCowLymtzD"
+#     }
+    
+    
+#     # content : str = {
+#     #     "address " : account.get_address,
+#     #     "time" : time.time(),
+#     #     "item_type" : ItemType.ipfs, 
+#     #     "item_hash" : "0x1"
+#     # 
+    
+    
+#     response : AlephMessage = await submit(
+#         account = account,
+#         content = content,
+#         message_type = MessageType.store,
+#         channel = conf.settings.DEFAULT_CHANNEL,
+#         api_server = conf.settings.API_HOST,
+#         storage_engine = StorageEnum.ipfs,
+#         inline= False,
+#         # item_type = ItemType.storage
+#     )
+    
+  
+    
+   
+   
+
+
+# # @pytest.mark.asyncio
+# # async def test_get_messages():
     
     
 
