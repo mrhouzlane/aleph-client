@@ -78,6 +78,7 @@ class CSDKAccount(BaseAccount):
         return privkey_to_address(self.private_key)
 
     def get_public_key(self) -> str:
+        return privkey_to_pubkey(self.private_key).decode()
         return privkey_to_pubkey(self.private_key).decode("ISO-8859-1")
 
 

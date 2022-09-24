@@ -1,5 +1,6 @@
 from dis import code_info
 import pytest
+from aleph_message.models import MessageType, MessagesResponse
 import time
 from typing import Dict 
 
@@ -10,7 +11,6 @@ from aleph_message.models.program import Encoding, MachineType, ProgramContent, 
 from aleph_message.models.program import FunctionEnvironment, MachineResources, FunctionRuntime, MachineVolume
 from aleph_client.chains.common import get_fallback_private_key, delete_private_key_file
 from aiohttp.client import ClientSession
-
 
 from aleph_client.asynchronous import (
     get_messages,
@@ -78,8 +78,6 @@ async def test_get_messages():
     assert messages[0].type
     assert messages[0].sender
 
-
-
 @pytest.mark.asyncio
 async def test_create_post():
     delete_private_key_file()
@@ -108,8 +106,7 @@ async def test_create_post():
     assert content.time <= time.time()
     assert content.ref == "02932831278"
         
-    
-        
+       
 @pytest.mark.asyncio
 async def test_create_aggregate():
     delete_private_key_file()

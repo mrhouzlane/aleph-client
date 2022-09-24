@@ -44,6 +44,18 @@ def new_mock_session_with_post_success():
     return mock_session
 
 
+def new_mock_session_with_post_success():
+    mock_response = AsyncMock()
+    mock_response.json.return_value = {"status": "success"}
+
+    mock_post = AsyncMock()
+    mock_post.return_value = mock_response
+
+    mock_session = MagicMock()
+    mock_session.post.return_value.__aenter__ = mock_post
+    return mock_session
+
+
 @pytest.mark.asyncio
 async def test_create_post():
     _get_fallback_session.cache_clear()

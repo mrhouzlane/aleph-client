@@ -463,7 +463,6 @@ async def submit(
     # let's add the content to the object so users can access it.
     message["content"] = content
 
-    # add_item_content_and_hash(message, inplace=True)
     return Message(**message)
 
 
