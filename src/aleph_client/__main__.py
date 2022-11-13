@@ -13,19 +13,26 @@ from typing import Optional, Dict, List
 from zipfile import BadZipFile
 
 import typer
+
 from aleph_message.models import (
     ProgramMessage,
     StoreMessage,
     MessageType,
     PostMessage,
     ForgetMessage,
-    AlephMessage,
+    AlephMessage
 )
+
 from typer import echo
 
 from aleph_client.types import AccountFromPrivateKey
 from aleph_client.account import _load_account
 from aleph_client.utils import create_archive
+from aleph_message.models.program import (
+    ImmutableVolume,
+    EphemeralVolume,
+    PersistentVolume,
+)
 from . import synchronous
 from .asynchronous import (
     get_fallback_session,
@@ -272,6 +279,9 @@ def program(
     runtime: str = None,
     beta: bool = False,
     debug: bool = False,
+    immutable_volume: str = None, 
+    ephemeral_volume: str = None, 
+    persistent_volume:str = None,
 ):
     """Register a program to run on Aleph.im virtual machines from a zip archive."""
 
@@ -296,10 +306,7 @@ def program(
         or settings.DEFAULT_RUNTIME_ID
     )
 
-    volumes = []
-    for volume in _prompt_for_volumes():
-        volumes.append(volume)
-        echo("\n")
+
 
     subscriptions: Optional[List[Dict]]
     if beta and yes_no_input("Subscribe to messages ?", default=False):
@@ -311,6 +318,16 @@ def program(
             raise typer.Exit(code=2)
     else:
         subscriptions = None
+
+    immutable_volume : EphemeralVolume (
+        input(f"ref = ?" )
+    )
+
+    ephemeral_volume : EphemeralVolume (
+    )
+
+    persistent_volume : EphemeralVolume (
+    )
 
     try:
         # Upload the source code
@@ -349,9 +366,9 @@ def program(
             vcpus=vcpus,
             timeout_seconds=timeout_seconds,
             encoding=encoding,
-            volumes=volumes,
             subscriptions=subscriptions,
         )
+
         logger.debug("Upload finished")
         if print_messages or print_program_message:
             echo(f"{result.json(indent=4)}")

@@ -1,0 +1,42 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+pylint = "*"
+
+[requires]
+python_version = "*"
+
+[packages]
+eth-account = "*"
+paho-mqtt = "*"
+click = "*"
+certifi = "*"
+python-magic = "*"
+eth-keys = "==0.4.0"
+e1839a8 = {path = ".", editable = true}
+pytest = "*"
+allure-pytest = "*"
+aleph-message = {ref = "hoh-new-type-alephmessage", git = "https://github.com/aleph-im/aleph-message.git"}
+pytest-cov = "*"
+mypy = "*"
+base58 = "*"
+pynacl = "*"
+cosmospy = "*"
+fastapi = "*"
+aleph-pytezos = {ref = "e584ede63c4302c6c22ac1777fda6676655d664a", git = "https://github.com/aleph-im/aleph-pytezos.git"}
+asyncmock = "*"
+mock = "*"
+pytest-asyncio = "*"
+unittest2 = "*"
+typing = "*"
+requests = {extras = ["security"], version = "*"}
+aiohttp = "*"
+aiomqtt = "*"
+sphinxcontrib-plantuml = "*"
+aiodns = "*"
+ecdsa = "*"
+pytest-twisted = "*"
+pytest-trio = "*"

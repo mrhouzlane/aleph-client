@@ -6,6 +6,11 @@ from typing import List, Optional, Dict, Iterable, Type
 from aiohttp import ClientSession
 from aleph_message.models import AlephMessage
 from aleph_message.models.program import ProgramContent, Encoding  # type: ignore
+from aleph_message.models.program import (
+    ImmutableVolume,
+    EphemeralVolume,
+    PersistentVolume,
+)
 
 from . import asynchronous
 from .conf import settings
@@ -76,7 +81,9 @@ def create_program(
     vcpus: int = settings.DEFAULT_VM_VCPUS,
     timeout_seconds: float = settings.DEFAULT_VM_TIMEOUT,
     encoding: Encoding = Encoding.zip,
-    volumes: List[Dict] = None,
+    volume_immutable: ImmutableVolume =  ,
+    volume_ephemeral : EphemeralVolume = ,
+    volume_persistent : PersistentVolume = ,
     subscriptions: Optional[List[Dict]] = None,
 ):
     return wrap_async(asynchronous.create_program)(
