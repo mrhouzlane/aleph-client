@@ -28,6 +28,12 @@ class Settings(BaseSettings):
     DEFAULT_VM_VCPUS: int = 1
     DEFAULT_VM_TIMEOUT: float = 30.0
 
+    DEFAULT_PERSISTENCE : str = "host"
+
+    DEFAULT_V_IMMU: int = 100
+    DEFAULT_V_EPH: int = 200
+    DEFAULT_V_PERS: int = 400
+
     CODE_USES_SQUASHFS: bool = which("mksquashfs") is not None  # True if command exists
 
     VM_URL_PATH = "https://aleph.sh/vm/{hash}"

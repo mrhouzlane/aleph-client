@@ -279,9 +279,10 @@ def program(
     runtime: str = None,
     beta: bool = False,
     debug: bool = False,
-    immutable_volume: str = None, 
-    ephemeral_volume: str = None, 
-    persistent_volume:str = None,
+    persistence: Optional[str] = settings.DEFAULT_PERSISTENCE,  
+    immutable_volume:  Optional[ImmutableVolume] = None, 
+    ephemeral_volume: Optional[EphemeralVolume] = None, 
+    persistent_volume: Optional[PersistentVolume] = None,
 ):
     """Register a program to run on Aleph.im virtual machines from a zip archive."""
 
@@ -319,15 +320,21 @@ def program(
     else:
         subscriptions = None
 
-    immutable_volume : EphemeralVolume (
-        input(f"ref = ?" )
-    )
+   
+    if immutable_volume :
+        ref = input(f"Ref of runtime ? [{settings.DEFAULT_RUNTIME_ID}] ")
+        immutable_volume.ref = ref
 
-    ephemeral_volume : EphemeralVolume (
-    )
+    elif ephemeral_volume : 
+        size_mib = input(f"Size of the volume ?")
+        ephemeral_volume.size_mib = size_mib
 
-    persistent_volume : EphemeralVolume (
-    )
+    elif persistent_volume : 
+        persistence = persistence or input(f"Persistance ? [{settings.DEFAULT_PERSISTENCE}] ")
+        name = input(f"Name of the persistent_volume")
+        persistence.name = name 
+        size_mib = input(f"Size of the volume ?")
+        ephemeral_volume.size_mib = size_mib
 
     try:
         # Upload the source code

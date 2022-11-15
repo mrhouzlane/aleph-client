@@ -65,7 +65,6 @@ def get_message(
         api_server=api_server,
     )
 
-
 def create_program(
     account: Account,
     program_ref: str,
@@ -81,9 +80,9 @@ def create_program(
     vcpus: int = settings.DEFAULT_VM_VCPUS,
     timeout_seconds: float = settings.DEFAULT_VM_TIMEOUT,
     encoding: Encoding = Encoding.zip,
-    volume_immutable: ImmutableVolume =  ,
-    volume_ephemeral : EphemeralVolume = ,
-    volume_persistent : PersistentVolume = ,
+    volume_immutable: Optional[ImmutableVolume] = settings.DEFAULT_V_IMMU,
+    volume_ephemeral : Optional[EphemeralVolume] = settings.DEFAULT_V_EPH,
+    volume_persistent : Optional[PersistentVolume] = settings.DEFAULT_V_PERS,
     subscriptions: Optional[List[Dict]] = None,
 ):
     return wrap_async(asynchronous.create_program)(
@@ -101,7 +100,9 @@ def create_program(
         vcpus=vcpus,
         timeout_seconds=timeout_seconds,
         encoding=encoding,
-        volumes=volumes,
+        volume_immutable= volume_immutable,
+        volume_ephemeral= volume_ephemeral,
+        volume_persistent = volume_persistent,
         subscriptions=subscriptions,
     )
 
